@@ -48,7 +48,7 @@ def api(service, body):
 
 
 def login():
-  with open(path.expanduser("~/.dcg/config.json"), 'r') as f:
+  with open(path.expanduser("~/.dcg/config.json"), 'r', encoding='utf-8') as f:
     config = json.load(f)
   return api('CodingamerRemoteService/loginSiteV2', [config["email"], config["pw"], True])['success']['userId']
 
@@ -72,7 +72,7 @@ def load_code(difficulty, levels):
 
     findProgressByPrettyId = api('Puzzle/findProgressByPrettyId', [pretty_id, user_id])
     readme_file = code_file = path.join(folder, 'index.html')
-    with open(readme_file, 'w') as f:
+    with open(readme_file, 'w', encoding='utf-8') as f:
       f.write(f"<h1>{findProgressByPrettyId['title']}</h1>\n\n")
       href = f"https://www.codingame.com" + findProgressByPrettyId['detailsPageUrl']
       f.write(f'<a href="{href}">{href}</a>\n\n')
@@ -96,7 +96,7 @@ def load_code(difficulty, levels):
       extension = extensions.get(lang.lower(), "txt")
       code_file = path.join(folder, f'{lang}.{extension}')
 
-      with open(code_file, 'w') as f:
+      with open(code_file, 'w', encoding='utf-8') as f:
         f.write(solution['code'])
 
       time = s['creationTime'] // 1000
