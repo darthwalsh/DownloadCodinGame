@@ -50,7 +50,7 @@ def api(service, body):
 def login():
   with open(path.expanduser("~/.dcg/config.json"), 'r', encoding='utf-8') as f:
     config = json.load(f)
-  return api('CodingamerRemoteService/loginSiteV2', [config["email"], config["pw"], True])['success']['userId']
+  return api('CodingamerRemoteService/loginSiteV2', [config["email"], config["pw"], True])['userId']
 
 def get_levels(user_id):
   levels = {}
@@ -59,6 +59,9 @@ def get_levels(user_id):
   return levels
 
 def load_code(difficulty, levels):
+  if difficulty == 'multi':
+    return
+
   print(f'Starting {difficulty}...')
   level_ids = [level['id'] for level in levels]
   findProgressByIds = api('Puzzle/findProgressByIds', [level_ids, user_id, 2])
@@ -92,14 +95,20 @@ def load_code(difficulty, levels):
         by_lang[lang] = s
 
     for lang, s in by_lang.items():
-      solution = api('Solution/findSolution', [user_id,s['testSessionQuestionSubmissionId']])
       extension = extensions.get(lang.lower(), "txt")
       code_file = path.join(folder, f'{lang}.{extension}')
+      time = s['creationTime'] // 1000
 
+      try:
+        modified = os.stat(code_file).st_mtime
+        if int(modified) == time:
+          continue
+      except FileNotFoundError:
+        pass
+
+      solution = api('Solution/findSolution', [user_id,s['testSessionQuestionSubmissionId']])
       with open(code_file, 'w', encoding='utf-8') as f:
         f.write(solution['code'])
-
-      time = s['creationTime'] // 1000
       os.utime(code_file, (time, time))
       
       print(code_file)
