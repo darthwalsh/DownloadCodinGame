@@ -19,8 +19,7 @@ async function run() {
   const minimalProgress = await api("Puzzle/findAllMinimalProgress", [null]);
   console.log("Got", minimalProgress.length, "puzzles");
 
-  minimalProgress.sort((a, b) => b.creationTime - a.creationTime);
-  const top = minimalProgress.slice(0, 10);
+  const top = minimalProgress.sort((a, b) => b.creationTime - a.creationTime).slice(0, 10);
 
   const details = await api("Puzzle/findProgressByIds", [
     top.map((p) => p.id),
@@ -28,7 +27,7 @@ async function run() {
     2,
   ]);
 
-  console.error(details)
+  console.error(details.sort((a, b) => b.creationTime - a.creationTime))
   for (const p of details) {
     // Could do more with Topics, Description, Cover banner, Contributor, XP, etc.
     const { level, title, detailsPageUrl, type, creationTime } = p;
