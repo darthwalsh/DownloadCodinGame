@@ -1,7 +1,12 @@
 const functions = require("firebase-functions");
+const admin = require("firebase-admin");
+
 const Feed = require("feed").Feed;
 
 const recentPuzzles = require("../index");
+
+admin.initializeApp();
+const bucket = admin.storage().bucket();
 
 const refreshHours = 4;
 
@@ -33,6 +38,9 @@ exports.scheduledFunction = functions.pubsub.schedule(cron).onRun(async () => {
     });
   }
 
-  console.log();
-  console.log(feed.rss2());
+  const rss = feed.rss2();
+
+  const file = bucket.file("recent/feed.rss");
+  await file.save(rss, {public: true});
+  console.log("Upload to", file.publicUrl(), "done");
 });
