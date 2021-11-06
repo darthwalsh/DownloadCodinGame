@@ -48,7 +48,7 @@ async function recentPuzzles() {
     });
 }
 
-const refreshHours = 4;
+const refreshHours = 1;
 function createFeed() {
   return new Feed({
     title: "DownloadCodinGame Latest Puzzles",
