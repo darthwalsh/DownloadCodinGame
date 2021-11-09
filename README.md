@@ -4,17 +4,24 @@ Download all your CodinGame solutions to your computer!
 
 ## Setup
 
-Create file `~/.dcg/config.json`
-
-    { "email": "your@gmail.com",  "pw": "yourPW" }
-
-*If you use OAuth to sign in to codingame, then you can use the reset password link to create your password.*
+```bash
+git clone https://github.com/darthwalsh/DownloadCodinGame.git
+python3 -m venv env
+source env/bin/activate
+pip install -r requirements.txt
+```
 
 ## Run
 
-Pick a folder where the app will write. Run with:
+Follow [login instructions](https://codingame.readthedocs.io/en/stable/user_guide/quickstart.html#login) from the `codingame` library.
+
+The script will attempt to read the read the session cookie from the Chrome browser, otherwise manually enter cookie at the prompt.
+
+Pick a folder where the app will download files to.
 
     python3 ./app.py path/to/where/to/Download/CodinGame
+
+Reuse this file path and the script will optimize by not downloading existing solutions.
 
 ## Features
 
