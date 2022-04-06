@@ -2,9 +2,13 @@
   Run with py ./app.py /Users/you/path/to/where/to/Download/CodinGame 
 """
 
+from collections import Counter
+import csv
 import os
 import re
 import sys
+from argparse import ArgumentParser
+from datetime import datetime
 from os import path
 
 import browser_cookie3
@@ -118,7 +122,7 @@ def get_cookie():
     return rememberMe.value
   return input('Session cookie from: https://codingame.com -> devtools -> Cookies -> rememberMe\n: ')
 
-def main(dcg_path):
+def download(dcg_path):
   client = codingame.Client()
   client.login(remember_me_cookie=get_cookie())
   puzzles = PuzzleClient(client, dcg_path)
@@ -128,6 +132,65 @@ def main(dcg_path):
   for name, levels in all_levels.items():
     puzzles.load_code(name, levels)
 
+def get_cache(dcg_path):
+  return [[(datetime.fromtimestamp(path.getmtime(path.join(root, file))), file.split('.')[0], difficulty, id)
+           for file in files
+           if not file.endswith('.html')
+           for *_, difficulty, id in [root.split(os.sep)]]
+          for root, _, files in os.walk(dcg_path)
+          if any(not file.endswith('.html') for file in files)]
+
+def listall(dcg_path):
+  for modified, lang, difficulty, id in sorted(sol for sols in get_cache(dcg_path) for sol in sols):
+    print(f'{modified.date()} {lang:>10} {difficulty:9} {id}')
+
+def monthly(dcg_path):
+  buckets = {}
+  for sols in get_cache(dcg_path):
+    for modified, lang, difficulty, id in sols:
+      bylang, bydiff = buckets.setdefault(modified.date().replace(day=1), (Counter(), Counter()))
+      bylang[lang] += 1
+      bydiff[difficulty] += 1
+
+  def fmt_counter(c):
+    return ", ".join(f'{v} {k}' for k, v in sorted(c.items(), key=lambda o: o[1], reverse=True))
+
+  for date, (bylang, bydiff) in sorted(buckets.items()):
+    print(date, ' ', fmt_counter(bydiff).ljust(40), fmt_counter(bylang))
+
+def print_csv(dcg_path):
+  puzzles = get_cache(dcg_path)
+  langs = Counter()
+  for sols in puzzles:
+    for _, lang, _, _ in sols:
+      langs[lang] += 1
+  lang_cols = sorted(langs, key=langs.get, reverse=True)
+
+  writer = csv.writer(sys.stdout)
+  writer.writerow('id difficulty url last_date'.split() + lang_cols)
+
+  for sols in sorted(puzzles, key=max):
+    lang_dates = ['' for _ in lang_cols]
+
+    for modified, lang, difficulty, id in sols:
+      lang_dates[lang_cols.index(lang)] = modified.date()
+    last_date = max(date for date in lang_dates if date)
+
+    writer.writerow([id, difficulty, f'https://www.codingame.com/ide/puzzle/{id}', last_date] + lang_dates)
+
 if __name__ == '__main__':
-  _, dcg_path = sys.argv  # dcg_path is where to write all your solutions
-  main(dcg_path)
+  parser = ArgumentParser()
+  parser.add_argument('command', help='Command to run', choices='download list monthly csv'.split())
+  parser.add_argument('dcg_path', help='Path to where to download CodinGame')
+  args = parser.parse_args()
+
+  if args.command == 'download':
+    download(args.dcg_path)
+  elif args.command == 'list':
+    listall(args.dcg_path)
+  elif args.command == 'monthly':
+    monthly(args.dcg_path)
+  elif args.command == 'csv':
+    print_csv(args.dcg_path)
+  else:
+    raise ValueError(f'Unknown command: {args.command}')

@@ -2,6 +2,11 @@
 
 Download all your CodinGame solutions to your computer!
 
+* Uses the CodinGame "API" to search your progress and download your code
+* Saves the latest solution for each language, with an appropriate file extension
+* Solution files have the filesystem modified date set to the actual time the puzzle was solved
+* Creates an `index.html` for each puzzle including puzzle text
+
 ## Setup
 
 ```bash
@@ -13,39 +18,58 @@ pip install -r requirements.txt
 
 ## Run
 
+`python3 ./app.py -h`
+
+shows help.
+
+### Download through CodinGame unofficial API to a local folder
+
 Follow [login instructions](https://codingame.readthedocs.io/en/stable/user_guide/quickstart.html#login) from the `codingame` library.
 
 The script will attempt to read the read the session cookie from the Chrome browser, otherwise manually enter cookie at the prompt.
 
-Pick a folder where the app will download files to.
+Pick a folder where the app will download files to:
 
-    python3 ./app.py path/to/where/to/Download/CodinGame
+`python3 ./app.py download path/to/where/to/Download/CodinGame`
 
-Reuse this file path and the script will optimize by not downloading existing solutions.
+*Reuse this folder path and the script will skip downloading old solutions.*
 
-## Features
 
-* Uses the CodinGame "API" to search your progress and download your code
-* Saves the latest solution for each language, with an appropriate file extension
-* Solution files have the filesystem modified date set to the actual time the puzzle was solved
-* Creates an `index.html` for each puzzle including puzzle text
+### List of each solution
 
-### Example queries to run on code database
+*The rest of these commands will load from the downloaded folder.*
 
-```powershell
-function info($f) {
-  $a = $f.FullName.split('\')
-  [array]::Reverse($a)
-  $null, $t, $n, $null = $a
+`python3 ./app.py list path/to/Downloaded/CodinGame`
 
-  $f.LastWriteTime.ToString("yyyy-MM-dd")
-  $f.BaseName.PadLeft(10)
-  $n.PadRight(9)
-  $t
-}
+```
+2015-10-17         C# tutorial  onboarding
+2015-10-18         C# easy      power-of-thor-episode-1
+2015-10-18         C# codegolf  power-of-thor
+2015-10-18         C# easy      temperatures
+2015-10-18         C# easy      mars-lander-episode-1
+2015-10-19         C# medium    mars-lander-episode-2
+...
+```
 
-gci -file -recurse . | `
-  where Extension -ne .html | `
-  sort LastWriteTime | `
-  % { (info $_) -join " " }
+### Monthly summaries of difficulty and languages
+
+`python3 ./app.py monthly path/to/Downloaded/CodinGame`
+
+```
+2022-01-01   8 easy, 2 medium                         6 Python3, 3 C++, 1 C
+2022-02-01   20 medium, 8 easy                        18 Python3, 9 C++, 1 TypeScript
+2022-03-01   8 medium, 6 easy, 1 hard                 10 Python3, 2 C, 2 C++, 1 Javascript
+...
+```
+
+### CSV report
+
+`python3 ./app.py csv path/to/Downloaded/CodinGame`
+
+```csv
+id,difficulty,url,last_date,Javascript,Python3,C,C#,C++,TypeScript
+mars-lander-episode-2,medium,https://www.codingame.com/ide/puzzle/mars-lander-episode-2,2015-10-19,,,,2015-10-19,,
+there-is-no-spoon-episode-1,medium,https://www.codingame.com/ide/puzzle/there-is-no-spoon-episode-1,2015-10-19,,,,2015-10-19,,
+shadows-of-the-knight-episode-1,medium,https://www.codingame.com/ide/puzzle/shadows-of-the-knight-episode-1,2015-10-19,,,,2015-10-19,,
+...
 ```
