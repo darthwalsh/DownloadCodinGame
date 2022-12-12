@@ -13,6 +13,7 @@ async function api(endpoint, body) {
     method,
     headers: {
       accept: "application/json, text/plain, */*",
+      "content-type": "application/json",
     },
     body: JSON.stringify(body),
   });
