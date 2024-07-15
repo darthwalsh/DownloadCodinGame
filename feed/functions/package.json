@@ -9,18 +9,17 @@
     "logs": "firebase functions:log"
   },
   "engines": {
-    "node": "14"
+    "node": "18"
   },
   "main": "index.js",
   "dependencies": {
     "feed": "^4.2.2",
-    "firebase-admin": "^9.8.0",
-    "firebase-functions": "^3.14.1",
-    "node-fetch": "^2.6.1"
+    "firebase-admin": "^12.1.0",
+    "firebase-functions": "^5.0.0"
   },
   "devDependencies": {
-    "firebase-functions-test": "^0.2.0",
-    "firebase-tools": "^9.16.0"
+    "firebase-functions-test": "^3.1.0",
+    "firebase-tools": "^13.13.3"
   },
   "private": true
 }

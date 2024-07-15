@@ -1,9 +1,9 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-const fetch = require("node-fetch");
 const Feed = require("feed").Feed;
 
 admin.initializeApp();
+
 const bucket = admin.storage().bucket();
 
 async function api(endpoint, body) {
