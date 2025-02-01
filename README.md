@@ -73,3 +73,7 @@ there-is-no-spoon-episode-1,medium,https://www.codingame.com/ide/puzzle/there-is
 shadows-of-the-knight-episode-1,medium,https://www.codingame.com/ide/puzzle/shadows-of-the-knight-episode-1,2015-10-19,,,,2015-10-19,,
 ...
 ```
+
+# TODO
+
+- [ ] [Progress bar](https://chatgpt.com/share/679e360d-fb08-8011-b74d-a1dd3367a353) for download, or at least `.` for each network request
