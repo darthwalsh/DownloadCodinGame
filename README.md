@@ -76,4 +76,4 @@ shadows-of-the-knight-episode-1,medium,https://www.codingame.com/ide/puzzle/shad
 
 # TODO
 
-- [ ] [Progress bar](https://chatgpt.com/share/679e360d-fb08-8011-b74d-a1dd3367a353) for download, or at least `.` for each network request
+- [ ] [Progress bar](https://chatgpt.com/share/679e360d-fb08-8011-b74d-a1dd3367a353) showing remaining progress

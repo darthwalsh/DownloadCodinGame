@@ -62,7 +62,7 @@ class PuzzleClient:
     if difficulty == 'multi':
       return
 
-    print(f'Starting {difficulty}...')
+    print(f'Starting {difficulty}', end='.')
     level_ids = [level['id'] for level in levels]
     findProgressByIds = self.client.request('Puzzle', 'findProgressByIds', [level_ids, self.user_id, 2])
     level_details = {progress['id']: progress for progress in findProgressByIds}
@@ -74,6 +74,7 @@ class PuzzleClient:
       os.makedirs(folder, exist_ok=True)
 
       findProgressByPrettyId = self.client.request('Puzzle', 'findProgressByPrettyId', [pretty_id, self.user_id])
+      print(end='.', flush=True)
       readme_file = code_file = path.join(folder, 'index.html')
       with open(readme_file, 'w', encoding='utf-8') as f:
         f.write(f"<h1>{findProgressByPrettyId['title']}</h1>\n\n")
@@ -86,6 +87,7 @@ class PuzzleClient:
         solutions = self.client.request('Solution', 'findMySolutions', [self.user_id, level['id'], None])
       except codingame.http.httperror.HTTPError as e:
         if e.status_code == 422:
+          print()
           print(f'Skipping {pretty_id}')
           print(e)
           continue
@@ -114,7 +116,10 @@ class PuzzleClient:
           f.write(solution['code'])
         os.utime(code_file, (time, time))
 
+        print()
         print(code_file)
+    print()
+      
 
 def get_cookie():
   try:
