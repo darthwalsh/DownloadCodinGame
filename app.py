@@ -10,6 +10,7 @@ import sys
 from argparse import ArgumentParser
 from datetime import datetime
 from os import path
+import traceback
 
 import browser_cookie3
 import codingame
@@ -46,7 +47,7 @@ extensions = {
 
 class PuzzleClient:
 
-  def __init__(self, client, dcg_path):
+  def __init__(self, client: codingame.Client, dcg_path: str):
     self.client = client
     self.dcg_path = dcg_path
     self.user_id = client.codingamer.id
@@ -116,10 +117,20 @@ class PuzzleClient:
         print(code_file)
 
 def get_cookie():
-  cj = browser_cookie3.chrome()
-  rememberMe = next((c for c in cj if 'codingame' in c.domain and c.name == 'rememberMe'), None)
-  if rememberMe:
-    return rememberMe.value
+  try:
+    cj = browser_cookie3.chrome()
+    rememberMe = next((c for c in cj if 'codingame' in c.domain and c.name == 'rememberMe'), None)
+    if rememberMe:
+      return rememberMe.value
+  except Exception:
+    bug_message = "Loading Chrome with browser_cookie3 failed, please report this issue: https://github.com/darthwalsh/DownloadCodinGame/issues/new"
+    traceback.print_exc()
+    # Maybe use colorize=True, but that requires python 3.13
+    print()
+    print("!" * len(bug_message))
+    print(bug_message)
+    print("!" * len(bug_message))
+    print()
   return input('Session cookie from: https://codingame.com -> devtools -> Cookies -> rememberMe\n: ')
 
 def download(dcg_path):

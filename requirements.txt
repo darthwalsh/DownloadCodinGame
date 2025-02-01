@@ -1,2 +1,2 @@
 codingame==1.2.3
-browser_cookie3==0.13.0
+browser_cookie3==0.20.1
